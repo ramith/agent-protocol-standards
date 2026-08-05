@@ -49,10 +49,10 @@ Each principle comes with a violation test. If the test fires, the skill does no
 
 ## Part 2 — Uniform anatomy
 
-Every skill follows this exact layout (developed in the repo's `.claude/skills/`; plugin packaging comes at the suite milestone, D3):
+Every skill follows this exact layout, living at the **repo root** (`<repo>/<skill-name>/` — the source of truth). A git-ignored symlink at `.claude/skills/<skill-name>` (created by `scripts/link-skills.sh`) makes it loadable during development; plugin packaging comes at the suite milestone (D3):
 
 ```
-.claude/skills/<skill-name>/
+<skill-name>/
 ├── SKILL.md                  # see skeleton below; < 500 lines total
 ├── references/
 │   ├── _source.md            # machine-readable source register (template below)
@@ -214,7 +214,7 @@ Example: `ACG-007 | CRITICAL | REJECT if `act` claim absent on an agent-facing e
 
 ## Part 5 — How to use the skills (consumer guide)
 
-**Install (teammates):** clone this repo and start Claude Code anywhere inside it — project skills in `.claude/skills/` load automatically (also from parent directories, and in cloud sessions working on this repo). When the suite is packaged as the `agentic-identity` plugin (D3 milestone), installation moves to `/plugin install` and skills gain the `agentic-identity:` namespace.
+**Install (teammates):** clone this repo and run `scripts/link-skills.sh` once — it creates git-ignored symlinks from `.claude/skills/` to the skill folders at the repo root, which Claude Code follows and loads automatically. When the suite is packaged as the `agentic-identity` plugin (D3 milestone), installation moves to `/plugin install`, the symlink step disappears, and skills gain the `agentic-identity:` namespace.
 
 **Caution until packaging:** a same-named skill in your personal `~/.claude/skills/` silently overrides the project copy — don't keep private forks of suite skills under the same name.
 

@@ -19,7 +19,7 @@ Consequence (accepted risk): delivery depends on the subagent choosing to load t
 
 ## D3. Project skills now, plugin at the milestone — REVISED 2026-08-05
 
-Originally "plugin from day one"; revised the same day after weighing the development loop. Skills are developed as project skills in `.claude/skills/<skill-name>/` — live change detection while authoring, teammates get them by cloning, cloud sessions load them from the repo. Packaging as the `agentic-identity` plugin (`.claude-plugin/plugin.json` + marketplace) becomes a suite-level milestone once the shape is validated across the knowledge layer.
+Originally "plugin from day one"; revised the same day after weighing the development loop. **Amended again 2026-08-05: skill folders live at the repo root** (`<repo>/<skill-name>/`), not inside `.claude/skills/` — the root folders are the single source of truth. Because Claude Code only auto-loads skills from `.claude/skills/`, a git-ignored symlink per skill (created by `scripts/link-skills.sh`) makes them loadable during development; Claude Code follows skill-directory symlinks. Packaging as the `agentic-identity` plugin (`.claude-plugin/plugin.json` + marketplace) remains the suite-level milestone once the shape is validated across the knowledge layer.
 
 Accepted until packaging: no namespace (skills are bare `/<skill-name>`), and a same-named personal skill in `~/.claude/skills/` would override the project copy (precedence: enterprise > personal > project).
 

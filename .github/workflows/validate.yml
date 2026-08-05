@@ -1,0 +1,15 @@
+name: validate-suite
+# Advisory CI (decision D6): reports red/green on every push; nothing blocks.
+# The real gate is the definition-of-done checkbox "validator green locally".
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run suite validator (structural checks, no network)
+        run: bash scripts/validate-suite.sh

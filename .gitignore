@@ -1,5 +1,9 @@
 .DS_Store
 .claude/settings.local.json
+# dev-time symlinks to root skill folders (created by scripts/link-skills.sh);
+# the-fool is a real committed directory and stays tracked
+.claude/skills/*
+!.claude/skills/the-fool
 # local spec scratch — extracts-only policy (D8); full spec texts never enter the repo
 spec-src/
 *.tmp

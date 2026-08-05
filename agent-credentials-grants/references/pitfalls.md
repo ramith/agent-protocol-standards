@@ -6,13 +6,14 @@ Compiled from the "Ambiguities & notes" sections of the seven reference files in
 ## Token exchange (token-exchange.md, RFC 8693)
 
 **Reading nested `act` inside-out.** The OUTERMOST `act` is the CURRENT actor; the most deeply
-nested is the LEAST RECENT (earliest) actor (§4.1). Many implementations invert this.
+nested is the LEAST RECENT (earliest) actor (§4.1). Guidance — ours, not spec: many
+implementations invert this.
 
 **Making access-control decisions on prior actors.** Consumers MUST only consider top-level claims
 plus the current actor; nested `act` members are informational only (§4.1).
 
 **Assuming an `actor_token` guarantees an `act` claim.** Issuing a composite token is "at the
-discretion of the authorization server and applicable policy" (§1.1); "delegation is impossible
+discretion of the authorization server and applicable policy and configuration" (§1.1); "delegation is impossible
 without an actor_token" appears only in the non-normative Appendix A.1.1.
 
 **Returning `invalid_grant` for a bad subject/actor token.** The mandated error is
@@ -43,7 +44,8 @@ exists; semantics are type-specific and the AS should not rely on simple object 
 ## Step-up (step-up.md, RFC 9470)
 
 **Treating "authentication level" as an interoperable hierarchy.** "Level" and "step up" are
-explicitly metaphors; no absolute hierarchy of authentication methods exists (§2).
+explicitly metaphors; they "do not suggest that there is an absolute hierarchy of authentication
+methods expressed in interoperable fashion" (§2).
 
 **Assuming a stepped-up token supersedes older tokens.** Not necessarily (e.g. high-ACR short-lived
 tokens); the spec recommends no caching strategy, and clients "must not" (lowercase, non-BCP14)
@@ -99,8 +101,8 @@ not final; parameter names, actions, and API shape may change — verify against
 stale "update" mentions remain in Sections 5.5 and 5.6.2. The defined action value is `merge`.
 
 **Emitting or parsing only one of `last_updated`/`last_updated_at`.** Section 6.4 prose defines
-`last_updated` but its example uses `"last_updated_at"`; the spec does not resolve this —
-implementations may emit either.
+`last_updated` but its example uses `"last_updated_at"`; the spec does not resolve this.
+Guidance — ours, not spec: expect implementations to emit either.
 
 **Trusting the IANA registry description of `grant_management_actions_supported`.** Appendix A.2
 describes it as "authorization details types" — apparently a copy-paste error; Section 7.1 defines

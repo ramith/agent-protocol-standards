@@ -59,8 +59,10 @@ Example from the spec (Figure 5, §2.2):
 - **Authorization request (§3)**: usable everywhere `scope` is used for the same purpose —
   RFC 6749 authorization requests, RFC 8628 device authorization requests, and CIBA backchannel
   authentication requests. Encoding is context-dependent; in an RFC 6749 authorization request it
-  is the serialized JSON in `application/x-www-form-urlencoded` format (§3). Implementers MAY use
-  pushed authorization requests (RFC 9126) (§3). The AS asks the user for consent based on this
+  is the serialized JSON in `application/x-www-form-urlencoded` format (§3). In case of
+  authorization requests as defined in RFC 6749, implementers MAY consider using pushed
+  authorization requests (RFC 9126) to improve the security, privacy, and reliability of the
+  flow (§3). The AS asks the user for consent based on this
   data; the user may grant a subset (§3, note). The authorization response defines no extensions (§4).
 - **Relationship to `scope` (§3.1)**: both can appear in the same request carrying independent
   requirements (supports incremental migration); a given API is RECOMMENDED to use only one form.
@@ -143,7 +145,8 @@ Example from the spec (Figure 5, §2.2):
 - Array MAY contain multiple entries of the same `type` (§2).
 - Type values: RECOMMENDED to be unambiguous/easily copied; collision-resistant namespace
   RECOMMENDED for cross-server APIs (§2.1). APIs MAY define extension fields (§2.2).
-- Implementers MAY use pushed authorization requests (RFC 9126) for authorization requests (§3).
+- In case of authorization requests as defined in RFC 6749, implementers MAY consider using pushed
+  authorization requests (RFC 9126) (§3).
 - A given API is RECOMMENDED to use only one of `scope` / `authorization_details` (§3.1).
 - AS MUST process `authorization_details` and `scope` requirements in combination (§3.1).
 - AS MUST present the merged set of requirements when gathering user consent (§3.1).

@@ -3,7 +3,7 @@ Source: rfc8693 — https://www.rfc-editor.org/rfc/rfc8693.txt — RFC (immutabl
 # RFC 8693 — OAuth 2.0 Token Exchange
 
 ## Overview
-Defines an HTTP/JSON Security Token Service (STS) protocol layered on OAuth 2.0: a client POSTs a token exchange request to the authorization server's token endpoint using a new extension grant type and receives a newly issued security token in a standard token response (§1, §2). The spec also defines JWT claims and introspection response members (`act`, `scope`, `client_id`, `may_act`) to express delegation and authorization-to-act semantics (§4). Token syntax/semantics and trust models are explicitly out of scope (§1). The requester is "the client" for the exchange even if it is actually a resource server trading an inbound access token for a downstream token (§1).
+Defines an HTTP/JSON Security Token Service (STS) protocol layered on OAuth 2.0: a client POSTs a token exchange request to the authorization server's token endpoint using a new extension grant type and receives a newly issued security token in a standard token response (§1, §2). The spec also defines JWT claims (`act`, `scope`, `client_id`, `may_act`) to express delegation and authorization-to-act semantics (§4); as introspection response members, only `act` and `may_act` are newly registered (§7.5) — RFC 7662 "already defines" `scope` and `client_id` (§4.2, §4.3). Token syntax/semantics and trust models are explicitly out of scope (§1). The requester is "the client" for the exchange even if it is actually a resource server trading an inbound access token for a downstream token (§1).
 
 ## Token exchange request parameters (§2.1)
 Sent to the token endpoint via HTTP POST, `application/x-www-form-urlencoded`, UTF-8 (§2.1).
@@ -57,7 +57,7 @@ Errors (§2.2.2):
 
 ## The `act` (Actor) claim (§4.1)
 - Expresses within a JWT "that delegation has occurred" and identifies the acting party to whom authority has been delegated. Value is a JSON object whose members are claims identifying the actor (e.g., `iss` + `sub` together may be needed to uniquely identify one) (§4.1).
-- Claims inside `act` "pertain only to the identity of the actor and are not relevant to the validity of the containing JWT"; non-identity claims (`exp`, `nbf`, `aud`) are not meaningful inside `act` and are not used (§4.1).
+- Claims inside `act` "pertain only to the identity of the actor and are not relevant to the validity of the containing JWT in the same manner as the top-level claims"; non-identity claims (`exp`, `nbf`, `aud`) are not meaningful inside `act` and are not used (§4.1).
 - Chained delegation nests `act` claims. Exact rule, quoted: "The outermost \"act\" claim represents the current actor while nested \"act\" claims represent prior actors.  The least recent actor is the most deeply nested." Nested `act` claims form a history trail from the initial subject through delegation steps (§4.1).
 - Authorization vs identification: "For the purpose of applying access control policy, the consumer of a token MUST only consider the token's top-level claims and the party identified as the current actor by the \"act\" claim.  Prior actors identified by any nested \"act\" claims are informational only and are not to be considered in access control decisions." (§4.1)
 - Spec's nested example (Figure 6, §4.1) — token is about user@example.com; service16 is the current actor, service77 a prior actor:
@@ -66,6 +66,8 @@ Errors (§2.2.2):
 {
   "aud":"https://service26.example.com",
   "iss":"https://issuer.example.com",
+  "exp":1443904100,
+  "nbf":1443904000,
   "sub":"user@example.com",
   "act":
   {
@@ -104,17 +106,17 @@ Errors (§2.2.2):
 - `invalid_target` SHOULD be used when the AS is unwilling/unable to issue a token for any indicated target service (§2.2.2); the AS MAY include `error_description` (§2.2.2).
 - Other URIs MAY be used to indicate token types beyond those defined in §3 (§3).
 - Access control: a token consumer MUST only consider the token's top-level claims and the current actor in `act`; nested (prior) actors are informational only (§4.1).
-- Tokens carrying privacy-sensitive information MUST only be transmitted over encrypted channels (e.g., TLS); where certain information must be hidden from the client, the token MUST be encrypted to its intended recipient; deployments SHOULD include only the minimally necessary data in issued tokens (§6).
+- Tokens employed in this context may contain privacy-sensitive information and, to prevent disclosure of such information to unintended parties, MUST only be transmitted over encrypted channels, such as TLS — the MUST covers all such tokens, not only those known to carry sensitive data; where certain information must be hidden from the client, the token MUST be encrypted to its intended recipient; deployments SHOULD include only the minimally necessary data in issued tokens (§6).
 
 ## Ambiguities & notes
-- Most-misquoted fact: in nested `act`, the OUTERMOST `act` is the CURRENT actor; the most deeply nested is the LEAST RECENT (earliest) actor (§4.1). Many implementations invert this.
-- The error code for an invalid `subject_token`/`actor_token` is `invalid_request`, not `invalid_grant` (§2.2.2) — frequently misimplemented.
+- Most-misquoted fact: in nested `act`, the OUTERMOST `act` is the CURRENT actor; the most deeply nested is the LEAST RECENT (earliest) actor (§4.1). Guidance — ours, not spec: many implementations invert this.
+- The error code for an invalid `subject_token`/`actor_token` is `invalid_request`, not `invalid_grant` (§2.2.2).
 - `access_token` response member may carry a non-access-token (name is historical); pair it with `issued_token_type` to know what was issued, and `token_type` is `N_A` when the issued token is not (usable as) an access token (§2.2.1).
 - `token_type` (how to use the token) vs `issued_token_type` (representation of the token) is an explicit, easy-to-confuse distinction the spec itself calls out (§2.2.1).
 - `actor_token_type`'s requiredness is conditional and stated in prose rather than a leading REQUIRED/OPTIONAL label (§2.1).
 - The `audience` uniqueness rule uses lowercase "must" ("must be unique within that server"), so it is not a BCP 14 keyword (§2.1).
 - §4.2's `scope` claim is a single space-separated JSON string — not a JSON array.
-- The spec never mandates that an `actor_token` produce an `act` claim: issuing a composite token "is at the discretion of the authorization server and applicable policy" (§1.1).
+- The spec never mandates that an `actor_token` produce an `act` claim: issuing a composite token "is at the discretion of the authorization server and applicable policy and configuration" (§1.1).
 - "delegation is impossible with only a subject_token and no actor_token" appears only in the non-normative Appendix A.1.1, not the normative body.
 - No linkage: exchanged tokens are independent of their inputs after issuance; revocation propagation is implementation-specific, not a protocol property (§2.1).
-- Guidance — ours, not spec: when validating agent delegation chains, enforce policy only on `sub` plus the outermost `act`, and log (not authorize on) deeper `act` history; this is the direct operational reading of the §4.1 MUST.
+- Guidance — ours, not spec: when validating agent delegation chains, enforce policy only on the token's top-level claims (`sub`, `aud`, `scope`, `exp`, ...) plus the outermost `act`, and log (not authorize on) deeper `act` history; this is the direct operational reading of the §4.1 MUST.

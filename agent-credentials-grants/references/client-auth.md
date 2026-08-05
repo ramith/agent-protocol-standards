@@ -72,7 +72,7 @@ Other claims MAY be present (§3(8)). The JWT MUST be digitally signed or MACed 
 
 ## Part B — CIMD (draft-ietf-oauth-client-id-metadata-document-02)
 
-MATURITY WARNING: This is IETF Web Authorization Protocol (oauth) Working Group Internet-Draft revision -02, dated 6 July 2026, intended status Standards Track, and it EXPIRES 7 January 2027. It is a work in progress, NOT a standard; "It is inappropriate to use Internet-Drafts as reference material" (Status of This Memo). Contains open TBDs (e.g., a possible `client_id_expires_at` property, §4).
+MATURITY WARNING: This is IETF Web Authorization Protocol (oauth) Working Group Internet-Draft revision -02, dated 6 July 2026, intended status Standards Track, and it EXPIRES 7 January 2027. It is a work in progress, NOT a standard; "It is inappropriate to use Internet-Drafts as reference material" (Status of This Memo). Contains an open TBD (a possible `client_id_expires_at` property, §4).
 
 ### B1. Concept: client_id as URL (§1, §3)
 A client publishes its own registration metadata at an https URL — the Client Identifier URL — used directly as its `client_id`, so the AS can fetch client metadata without prior registration (§1). A Client Identifier URL (§3):
@@ -99,12 +99,12 @@ Short and stable URLs are RECOMMENDED; a path of `/` is NOT RECOMMENDED; URL sho
 - AS MUST treat any HTTP status other than 200 OK as an error, and MUST NOT automatically follow HTTP redirects when fetching (§5).
 - If fetching fails, the AS SHOULD abort the authorization request (§5.1).
 - Caching (§5.2): AS MAY cache the metadata; SHOULD respect HTTP cache headers (RFC 9111) but MAY set its own upper/lower cache-lifetime bounds; MUST NOT cache error responses; MUST NOT cache invalid or malformed documents.
-- SSRF (§8.6): AS MUST NOT fetch a Client ID Metadata Document URL, or any URL within the document, resolving to special-use IP addresses (RFC 6890); a loopback exception MAY apply only to development/testing deployments and MUST NOT be applied in production; AS SHOULD only fetch or parse URLs with known and supported URI schemes.
+- SSRF (§8.6): AS MUST NOT fetch a Client ID Metadata Document URL, or any URL within the document, resolving to special-use IP addresses (RFC 6890); ASes deployed for development or testing purposes MAY relax this restriction to allow fetching from loopback addresses when the AS itself is also running on a loopback address and the resolved address matches the same loopback interface — and MUST NOT apply this exception in production deployments; AS SHOULD only fetch or parse URLs with known and supported URI schemes.
 - Size (§8.7): AS SHOULD limit the data read when fetching (recommended maximum to read: 5 kilobytes) and treat exceeding it as an error.
 - AS metadata (§6): ASes publishing RFC 8414 metadata MUST include `client_id_metadata_document_supported` (listed as OPTIONAL; boolean) to signal support.
 
 ### B4. Interaction with client authentication (§4.1, §8.2)
-No shared secret can be established, so credentials use public/private key pairs: the client publishes its public key in the metadata document — the draft's permitted vehicles are the `jwks` or `jwks_uri` properties (§4.1). Clients capable of maintaining private key material SHOULD perform client authentication with an acceptable method from the OAuth Token Endpoint Authentication Methods registry (§8.2). Example from §8.2 (trimmed):
+No shared secret can be established, so credentials use public/private key pairs: the client publishes its public key in the metadata document — only public keys are permitted, such as those published via the `jwks` or `jwks_uri` properties (§4.1). Clients that are capable of maintaining private key material and performing client authentication SHOULD do so with an acceptable method, such as a method in the OAuth Token Endpoint Authentication Methods registry (§8.2). Example from §8.2 (trimmed):
 
     "token_endpoint_auth_method": "private_key_jwt",
     "jwks_uri": "https://client.example.com/jwks.json"

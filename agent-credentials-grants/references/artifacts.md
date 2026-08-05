@@ -74,7 +74,7 @@ WWW-Authenticate: Bearer error="insufficient_user_authentication",
   acr_values="myACR"
 ```
 
-Figure 3 variant: same error with `max_age="5"`. Both auth-params MAY appear in one challenge; the RS MAY also add `scope` (§3).
+Figure 3 variant: same error with `max_age="5"`. Both auth-params MAY appear in one challenge if the RS needs to express requirements about both recency and authentication level; the RS MAY also add `scope` (§3).
 
 ## 6. Client authentication JWT — client-auth.md, rfc7523 §2.2 wire example + §3 claims table (claims set assembled from the table; the extract has no verbatim claims figure)
 

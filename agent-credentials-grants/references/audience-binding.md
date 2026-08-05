@@ -22,11 +22,11 @@ Syntactic rules for the value (§2):
 | Multiple `resource` parameters MAY be used to indicate the token is intended for use at multiple resources | MAY | §2 |
 
 Where it may appear:
-- **Authorization request** (§2.1) — at the authorization endpoint. In the implicit flow the requested resource applies to the access token returned directly; in the code flow it applies to the full authorization grant (§2.1). In a JWT-Secured Authorization Request, a single value is a JSON string; multiple values are an array of strings (§2.1).
+- **Authorization request** (§2.1) — at the authorization endpoint. In the implicit flow the requested resource applies to the access token returned directly; in the code flow it applies to the full authorization grant (§2.1). For an authorization request sent as a JWT, such as when using the JWT Secured Authorization Request [JWT-SAR], a single value is a JSON string; multiple values are an array of strings (§2.1).
 - **Access token request** (§2.2) — at the token endpoint, "for all grant types" (§2.2).
 - IANA registration confirms usage locations: "authorization request, token request" (§5.1).
 
-Multiple-occurrence semantics: with multiple `resource` values plus `scope`, the client asks for a token with the requested scope usable at all the requested target services — "the requested access rights of the token are the cartesian product of all the scopes at all the target services" (§2.2). §3 encourages using only a single `resource` parameter: a multi-audience bearer token is valid at more than one resource, so any one of them can use it to access the others, requiring "a high degree of trust between the involved parties"; also, an AS may be unwilling or unable to fulfill a multi-resource token request (§3).
+Multiple-occurrence semantics: with multiple `resource` values plus `scope`, the client asks for a token with the requested scope usable at all the requested target services — "the requested access rights of the token are the cartesian product of all the scopes at all the target services" (§2.2). Although multiple occurrences of the parameter may be included in a token request, §3 encourages using only a single `resource` parameter: a multi-audience bearer token is valid at more than one resource, so any one of them can use it to access the others, requiring "a high degree of trust between the involved parties"; also, an AS may be unwilling or unable to fulfill a multi-resource token request (§3).
 
 Value selection (§2): the client SHOULD provide the most specific URI it can for the complete API or set of resources, and SHOULD use the base URI of the API unless specific knowledge dictates otherwise. Spec examples: `https://api.example.com/` for an exclusive application on a host; `https://api.example.com/app/` when it is one of many; `https://apps.example.com/scim/` to cover all SCIM endpoints (`.../scim/Users`, `.../scim/Groups`, `.../scim/Schemas`) (§2).
 
@@ -36,7 +36,7 @@ Value selection (§2): the client SHOULD provide the most specific URI it can fo
 - **Acceptability is AS discretion** (§2.2): which resource values are acceptable "is at its sole discretion based on local policy or configuration". For `refresh_token` or `authorization_code` grants, policy may limit acceptable resources to those originally granted (or a subset). In the `authorization_code` subset case, the access token is based on the requested subset, but any returned refresh token is bound to the full original grant (§2.2).
 - **Downscoping vs `scope`** (§2.2): "To the extent possible", when issuing access tokens the AS should downscope (give fewer permissions than the resource owner authorized) to what the respective resource can process and needs to know — a privacy improvement. Per RFC 6749 §5.1, the AS must indicate the token's effective scope in the `scope` response parameter when it differs from the requested scope (§2.2; both "should"/"must" here are lowercase in the spec).
 - **Error code** (§2): `invalid_target` — "The requested resource is invalid, missing, unknown, or malformed." Usable in response to an authorization request or access token request, including for an invalid combination of resource and scope (§2). If the AS fails to parse the value(s) or finds the resource(s) unacceptable, it should (lowercase) reject with `invalid_target` as the `error` parameter value, optionally with `error_description` (§2.1). IANA usage locations: "implicit grant error response, token error response" (§5.2).
-- **Omitted parameter** (§2.1): the AS MAY process the request with no specific resource or a predefined default resource, or MAY require clients to specify resource(s) and MAY fail omitting requests with an `invalid_target` error.
+- **Omitted parameter** (§2.1): if the client omits the parameter when requesting authorization, the AS MAY process the request with no specific resource or a predefined default resource, or MAY require clients to specify resource(s) and MAY fail omitting requests with an `invalid_target` error. These MAYs are stated for authorization requests only; §2.2 gives no omission rule for token requests.
 
 ## Normative requirements (capitalized BCP 14 keywords)
 
@@ -51,8 +51,8 @@ Value selection (§2): the client SHOULD provide the most specific URI it can fo
 | 7 | Client SHOULD provide the most specific URI it can for the complete API / resource set | SHOULD | §2 |
 | 8 | Client SHOULD use the base URI of the API as the value unless specific knowledge dictates otherwise | SHOULD | §2 |
 | 9 | AS SHOULD audience-restrict issued access tokens to the indicated resource(s) | SHOULD | §2 |
-| 10 | On omission, AS MAY process with no specific resource or a predefined default | MAY | §2.1 |
-| 11 | AS MAY require clients to specify resource(s), and MAY fail omitting requests with `invalid_target` | MAY | §2.1 |
+| 10 | On omission when requesting authorization, AS MAY process with no specific resource or a predefined default | MAY | §2.1 |
+| 11 | AS MAY require clients to specify resource(s), and MAY fail authorization requests omitting the parameter with `invalid_target` | MAY | §2.1 |
 
 ## Spec examples (trimmed)
 

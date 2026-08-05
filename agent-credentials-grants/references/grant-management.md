@@ -1,6 +1,6 @@
 # Grant Management for OAuth 2.0
 
-Source: grant-mgmt — https://openid.net/specs/oauth-v2-grant-management-ID1.html — Implementer's Draft 1 (NOT final; check https://openid.net/developers/specs/ for newer) — fetched 2026-08-05 — extracted 2026-08-05
+Source: grant-mgmt — https://openid.net/specs/oauth-v2-grant-management-ID1.html — Implementer's Draft 1 (the "Implementer's Draft 1" designation comes from the OpenID specs index/URL; the document title itself says only "Grant Management for OAuth 2.0 (Draft)") (NOT final; check https://openid.net/developers/specs/ for newer) — fetched 2026-08-05 — extracted 2026-08-05
 
 Document identity (from the HTML header): Internet-Draft `oauth-v2-grant-management-03`, OpenID FAPI Working Group, published 9 May 2023, Standards Track. Authors: T. Lodderstedt (yes.com), S. Low (Biza.io), D. Postnikov (Independent).
 
@@ -99,7 +99,7 @@ Unknown resource URL → HTTP 404. Client not authorized for the call → HTTP 4
 
 - `grant_management_actions_supported` — OPTIONAL. JSON array of actions the AS supports. Allowed values: `query`, `revoke`, `merge`, `replace`, `create`. If omitted, the AS does not support any grant management actions.
 - `grant_management_endpoint` — OPTIONAL. URL of the AS's Grant Management Administration Endpoint.
-- `grant_management_action_required` — OPTIONAL. Boolean; if `true`, all authorization requests must specify a `grant_management_action`. Defaults to `false`.
+- `grant_management_action_required` — OPTIONAL. Boolean; if `true`, all authorization requests must specify a `grant_management_action` (lowercase "must" in Section 7.1; the IANA registration description in Appendix A.2 uses a capitalized MUST: "Boolean where, if `true`, all authorization requests MUST specify a `grant_management_action`"). Defaults to `false`.
 
 ## 6. Security / authorization for the API (Section 6.1)
 
@@ -127,7 +127,7 @@ The client must obtain an access token authorized for the Grant Management API; 
 - **Maturity**: Implementer's Draft 1 (draft -03, May 2023), not a Final Specification. Parameter names, actions, and API shape may change in later drafts/final; verify against the current spec before relying on details.
 - **Lowercase keywords**: the BCP 14 note says keywords are normative only in ALL CAPS, yet most requirement language in the body is lowercase ("must", "shall", "should"). Only a few (e.g. the revocation MUST in Section 6.5, MAY in Section 6.4) are capitalized. Guidance — ours, not spec: treat the lowercase ones as intended requirements but expect interoperability wiggle room.
 - **`update` vs `merge`**: the action was renamed `update` → `merge` in draft -02 (Appendix D), but stale "update" mentions remain in Sections 5.5 ("for example, `create`, `update` or `replace`") and 5.6.2. The defined action value is `merge`.
-- **`last_updated` vs `last_updated_at`**: Section 6.4 prose defines `last_updated`, but the Section 6.4 example uses `"last_updated_at"`. The spec does not resolve this; implementations may emit either.
+- **`last_updated` vs `last_updated_at`**: Section 6.4 prose defines `last_updated`, but the Section 6.4 example uses `"last_updated_at"`. The spec does not resolve this. Guidance — ours, not spec: expect implementations to emit either.
 - **IANA description mismatch**: Appendix A.2 describes `grant_management_actions_supported` as a "JSON array containing the authorization details types the AS supports" — apparently a copy-paste error; Section 7.1 defines it as the supported actions.
 - Metadata actions (`query`, `revoke`) and request actions (`create`, `merge`, `replace`) form one 5-value set in `grant_management_actions_supported`; only `create`/`merge`/`replace` are valid `grant_management_action` request values (Sections 5.2, 7.1).
 - Out of scope (Section 4): historical/archived consent records and consent resources shared with third parties (e.g. central consent dashboards).

@@ -27,7 +27,7 @@ WWW-Authenticate: Bearer error="insufficient_user_authentication",
   acr_values="myACR"
 ```
 
-A `max_age` variant is shown in Figure 3 (§3): same error code with `max_age="5"`. Both auth-params MAY occur in the same challenge; the RS MAY also include the `scope` attribute (per RFC 6750 §3.1) if scopes are lacking (§3).
+A `max_age` variant is shown in Figure 3 (§3): same error code with `max_age="5"`. Both auth-params MAY occur in the same challenge if the RS needs to express requirements about both recency and authentication level; the RS MAY also include the `scope` attribute (per RFC 6750 §3.1) if scopes are lacking (§3).
 
 ## Authorization request behavior (§4)
 
@@ -58,7 +58,7 @@ The `max_age` equivalent (Figure 5, §4) uses `&max_age=5` instead.
 | SHOULD | Client | On an `insufficient_user_authentication` challenge, parse `WWW-Authenticate` for `acr_values` and `max_age` and use them, if present, in the authorization request | §4 |
 | SHOULD | AS | Consider the requested acr value necessary to fulfil the request when issuing the access token; otherwise fail with `unmet_authentication_requirements` [OIDCUAR] | §5 |
 | MUST NOT | Anyone | Use this document to position OAuth as an authentication protocol | §9 |
-| MAY | RS | Include both `max_age` and `acr_values` in the same challenge | §3 |
+| MAY | RS | Include both `max_age` and `acr_values` in the same challenge, if it needs to express requirements about both recency and authentication level | §3 |
 | MAY | RS | Include the `scope` attribute (RFC 6750 §3.1) if required scopes are also lacking | §3 |
 | MAY | AS/RS | Use encoding/validation methods other than JWT (RFC 9068) or introspection (RFC 7662) — out of scope | §6 |
 | MAY | RS | Return a challenge without verifying the client presented a valid token (but this leaks required token properties to unproven actors) | §9 |
@@ -66,7 +66,7 @@ The `max_age` equivalent (Figure 5, §4) uses `&max_age=5` instead.
 
 ## Ambiguities & notes
 
-- "Authentication level" and "step up" are explicitly metaphors: no absolute, interoperable hierarchy of authentication methods exists (§2).
+- "Authentication level" and "step up" are explicitly metaphors: they "do not suggest that there is an absolute hierarchy of authentication methods expressed in interoperable fashion" (§2).
 - How the RS determines/expresses/publishes its authentication requirements is out of scope (§3 note).
 - The auth-params are only defined for use with `insufficient_user_authentication`, but future specs may define their use with other error codes (§3).
 - A stepped-up token does not necessarily supersede older tokens (e.g., high-ACR short-lived tokens); the spec recommends no token-caching strategy, and clients "must not" (lowercase, non-BCP14) inspect access token content (§2).

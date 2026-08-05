@@ -1,0 +1,5 @@
+.DS_Store
+.claude/settings.local.json
+# local spec scratch — extracts-only policy (D8); full spec texts never enter the repo
+spec-src/
+*.tmp

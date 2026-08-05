@@ -12,6 +12,7 @@ Raw copies live in `spec-src/agent-credentials-grants/` (git-ignored; extracts-o
 | rfc7523 | https://www.rfc-editor.org/rfc/rfc7523.txt | RFC (immutable) | 2026-08-05 | 0 | — | ae24f77a8fc4338903c805c6ace38def1f23d40194aea87b123b13c5b3d2d915 |
 | cimd | https://www.ietf.org/archive/id/draft-ietf-oauth-client-id-metadata-document-02.txt | draft -02 (expires 2027-01-07) | 2026-08-05 | 90 | https://datatracker.ietf.org/doc/draft-ietf-oauth-client-id-metadata-document/ | 1a0d5f079042734e754afc88ca7a554418d12a2c64c936519130c55e322297fe |
 | grant-mgmt | https://openid.net/specs/oauth-v2-grant-management-ID1.html | Implementer's Draft 1 | 2026-08-05 | 90 | https://openid.net/developers/specs/ | 13c3b8d3b2f16ad7cd529984e1fa0c228aca62de8eb9d7c155083d40d08798ab |
+| rfc9068 | https://www.rfc-editor.org/rfc/rfc9068.txt | RFC (immutable) | 2026-08-05 | 0 | — | 68d3ff3910c0f2340fd7b93b430e00053da845b6eebe095ebef0c8bfda5e14c5 |
 
 Fetch notes:
 - RFCs fetched as immutable plain text from rfc-editor.org (`.txt`) — preferred format per QA strategy (no HTML→markdown conversion risk).
